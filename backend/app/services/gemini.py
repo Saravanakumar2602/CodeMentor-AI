@@ -20,8 +20,8 @@ def generate_code_explanation(code_input: str, language: str = None) -> str:
         raise RuntimeError("GEMINI_API_KEY is not configured on the backend server.")
 
     try:
-        # Utilizing gemini-1.5-flash model
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # Utilizing gemini-2.5-flash model
+        model = genai.GenerativeModel("gemini-2.5-flash")
         
         lang_context = f" written in {language}" if language else ""
         

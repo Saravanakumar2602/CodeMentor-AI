@@ -1,0 +1,29 @@
+# Credentials / Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python virtual environment and caching
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Node dependencies and build files
+node_modules/
+dist/
+dist-ssr/
+*.log
+
+# System/IDE files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.sln
+*.swp
