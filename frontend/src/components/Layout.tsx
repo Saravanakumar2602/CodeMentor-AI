@@ -1,13 +1,11 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Terminal, History, LogOut, Code, FileCheck2, Compass, Award } from 'lucide-react';
 
 const Layout: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const isPractice = location.pathname === '/practice';
 
   const handleLogout = async () => {
     try {
@@ -189,7 +187,7 @@ const Layout: React.FC = () => {
         </header>
 
         <main className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-6">
-          <div className={`${isPractice ? 'w-full px-2' : 'max-w-5xl mx-auto'} h-full`}>
+          <div className="w-full h-full">
             <Outlet />
           </div>
         </main>
