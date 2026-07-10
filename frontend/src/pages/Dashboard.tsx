@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
           Code Explanation Studio
         </h1>
         <p className="text-sm text-slate-400 mt-1">
-          Paste any complex block of code and receive a structured breakdown powered by Gemini AI.
+          Paste any complex block of code and receive a structured breakdown powered by Nemotron AI.
         </p>
       </div>
 

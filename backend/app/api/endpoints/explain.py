@@ -14,13 +14,13 @@ def explain_code(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Validates input code, gets markdown explanation from Gemini AI,
+    Validates input code, gets markdown explanation from Nemotron AI,
     logs the event in Supabase chat_history, and returns the response metadata.
     """
     logger.info(f"Received code explanation request from user: {current_user['id']}")
     
     try:
-        # Step 1: Send the code input block to the Gemini service
+        # Step 1: Send the code input block to the Nemotron service
         explanation = generate_code_explanation(
             code_input=request.code_input,
             language=request.language

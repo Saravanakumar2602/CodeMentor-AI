@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PlaygroundProvider } from './context/PlaygroundContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import HistoryPage from './pages/History';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -26,8 +27,8 @@ function App() {
               </Route>
             </Route>
 
-            {/* Fallback to Dashboard / Home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Fallback to 404 Page */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </PlaygroundProvider>
       </AuthProvider>

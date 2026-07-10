@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # 2. Instantiate the FastAPI application
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="FastAPI Backend for CodeMentor AI. Interfaces with Gemini API and Supabase database.",
+    description="FastAPI Backend for CodeMentor AI. Interfaces with Nemotron AI API and Supabase database.",
     version="1.0.0"
 )
 

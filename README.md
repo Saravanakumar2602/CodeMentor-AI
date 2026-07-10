@@ -1,6 +1,6 @@
 # CodeMentor AI - Phase 1 MVP
 
-CodeMentor AI is an AI-powered developer tool that explains complex code scripts using Google's Gemini API and records explanation logs securely via Supabase.
+CodeMentor AI is an AI-powered developer tool that explains complex code scripts using Nvidia's Nemotron-3 model and records explanation logs securely via Supabase.
 
 ---
 
@@ -13,7 +13,7 @@ CodeMentor AI/
 │   │   ├── api/              # API Route Handlers (explain, history, auth)
 │   │   ├── core/             # Configuration & Auth Security
 │   │   ├── models/           # Pydantic Request/Response validation models
-│   │   ├── services/         # Integrations (Gemini API & Supabase Python Client)
+│   │   ├── services/         # Integrations (Nemotron-3 Client & Supabase Python Client)
 │   │   └── main.py           # FastAPI Entrypoint
 │   ├── requirements.txt      # Python libraries
 │   └── schema.sql            # Postgres SQL migration script
@@ -71,10 +71,12 @@ CodeMentor AI/
      cp .env.example .env
      ```
    * Open the `.env` file and fill in your keys:
-     * **`GEMINI_API_KEY`**: Obtain this key from the [Google AI Studio console](https://aistudio.google.com/).
-     * **`SUPABASE_URL`**: Found in your Supabase Project Settings -> API -> Project URL.
-     * **`SUPABASE_KEY`**: Found in Supabase Settings -> API -> Project API Keys (Use the `service_role` key so the backend can write to the database on behalf of users).
-     * **`SUPABASE_JWT_SECRET`**: Found in Supabase Settings -> API -> JWT Settings -> JWT Secret (Used for secure token decoding).
+      * **`AI_API_KEY`**: Obtain this key from your OpenRouter console.
+      * **`AI_API_BASE_URL`**: Set to `https://openrouter.ai/api/v1`.
+      * **`AI_MODEL_NAME`**: Set to `nvidia/nemotron-3-ultra-550b-a55b:free`.
+      * **`SUPABASE_URL`**: Found in your Supabase Project Settings -> API -> Project URL.
+      * **`SUPABASE_KEY`**: Found in Supabase Settings -> API -> Project API Keys (Use the `service_role` key so the backend can write to the database on behalf of users).
+      * **`SUPABASE_JWT_SECRET`**: Found in Supabase Settings -> API -> JWT Settings -> JWT Secret (Used for secure token decoding).
 
 5. Start the backend developer server:
    ```bash
@@ -132,7 +134,9 @@ The database configuration is completely handled in Step 1. Row Level Security g
    * **Build Command**: `pip install -r requirements.txt`
    * **Start Command**: `python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 5. Go to the **Environment** tab on Render and add the environment variables defined in your backend `.env` file:
-   * `GEMINI_API_KEY`
+    * `AI_API_KEY`
+    * `AI_API_BASE_URL`
+    * `AI_MODEL_NAME`
    * `SUPABASE_URL`
    * `SUPABASE_KEY`
    * `SUPABASE_JWT_SECRET`
