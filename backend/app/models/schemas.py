@@ -48,3 +48,32 @@ class APIErrorResponse(BaseModel):
     Global response container for errors returned by the backend.
     """
     error: ErrorDetail = Field(..., description="Detailed structure of the occurred warning.")
+
+class CodeReviewRequest(BaseModel):
+    """
+    Validation schema for code review requests.
+    """
+    code_input: str = Field(..., min_length=1, description="The raw code snippet to review.")
+    language: Optional[str] = Field(None, description="The programming language tag of the code snippet.")
+
+class CodeReviewResponse(BaseModel):
+    """
+    Validation schema for code review database records returned to the client.
+    """
+    id: str = Field(..., description="Unique UUID identification of the review log.")
+    user_id: str = Field(..., description="Unique user profile UUID.")
+    code_input: str = Field(..., description="The original submitted code snippet.")
+    overall_score: int = Field(..., ge=0, le=100, description="Overall score rating out of 100.")
+    readability_score: int = Field(..., ge=0, le=100, description="Readability score rating.")
+    performance_score: int = Field(..., ge=0, le=100, description="Performance score rating.")
+    maintainability_score: int = Field(..., ge=0, le=100, description="Maintainability score rating.")
+    security_score: int = Field(..., ge=0, le=100, description="Security score rating.")
+    summary: str = Field(..., description="Summary of the code review.")
+    suggestions: List[str] = Field(default=[], description="List of improvement suggestions.")
+    refactored_code: Optional[str] = Field(None, description="Optional refactored version of the code.")
+    interview_tips: List[str] = Field(default=[], description="List of related interview tips.")
+    language: Optional[str] = Field(None, description="Detected or specified code language.")
+    created_at: datetime = Field(..., description="Timestamp of creation.")
+
+    class Config:
+        from_attributes = True

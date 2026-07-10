@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Terminal, History, LogOut, Code } from 'lucide-react';
+import { Terminal, History, LogOut, Code, FileCheck2 } from 'lucide-react';
 
 const Layout: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -45,6 +45,20 @@ const Layout: React.FC = () => {
           >
             <Terminal size={20} />
             <span>Explain Code</span>
+          </NavLink>
+
+          <NavLink
+            to="/review"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                isActive
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/20 border border-indigo-500/20'
+                  : 'text-slate-400 hover:bg-slate-950/40 hover:text-slate-100 border border-transparent'
+              }`
+            }
+          >
+            <FileCheck2 size={20} />
+            <span>Code Review</span>
           </NavLink>
 
           <NavLink
@@ -102,6 +116,15 @@ const Layout: React.FC = () => {
               }
             >
               <Terminal size={18} />
+            </NavLink>
+            <NavLink
+              to="/review"
+              className={({ isActive }) =>
+                `p-2 rounded-lg transition-colors ${isActive ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-400'}`
+              }
+              title="Code Review"
+            >
+              <FileCheck2 size={18} />
             </NavLink>
             <NavLink
               to="/history"

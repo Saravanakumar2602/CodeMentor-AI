@@ -82,3 +82,90 @@ def delete_chat_history_entry(user_id: str, entry_id: str) -> bool:
     except Exception as e:
         logger.error(f"Database delete error: {str(e)}")
         raise RuntimeError(f"Database error while deleting entry: {str(e)}")
+
+def get_user_code_reviews(user_id: str) -> list:
+    """
+    Retrieves all code review logs for a user, ordered by creation date desc.
+    """
+    if not supabase_client:
+        raise RuntimeError("Supabase client is not initialized.")
+        
+    try:
+        logger.info(f"Fetching code reviews for user: {user_id}")
+        response = supabase_client.table("code_reviews") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .order("created_at", desc=True) \
+            .execute()
+        return response.data
+    except Exception as e:
+        logger.error(f"Database select error: {str(e)}")
+        raise RuntimeError(f"Database error while fetching code reviews: {str(e)}")
+
+def create_code_review_entry(
+    user_id: str,
+    code_input: str,
+    overall_score: int,
+    readability_score: int,
+    performance_score: int,
+    maintainability_score: int,
+    security_score: int,
+    summary: str,
+    suggestions: list,
+    refactored_code: str = None,
+    interview_tips: list = [],
+    language: str = None
+) -> dict:
+    """
+    Inserts a new code review entry into the code_reviews table.
+    """
+    if not supabase_client:
+        raise RuntimeError("Supabase client is not initialized.")
+        
+    try:
+        logger.info(f"Inserting new code review log for user: {user_id}")
+        data = {
+            "user_id": user_id,
+            "code_input": code_input,
+            "overall_score": overall_score,
+            "readability_score": readability_score,
+            "performance_score": performance_score,
+            "maintainability_score": maintainability_score,
+            "security_score": security_score,
+            "summary": summary,
+            "suggestions": suggestions,
+            "refactored_code": refactored_code,
+            "interview_tips": interview_tips,
+            "language": language
+        }
+        response = supabase_client.table("code_reviews").insert(data).execute()
+        
+        if response.data and len(response.data) > 0:
+            return response.data[0]
+        else:
+            raise RuntimeError("Database insert returned an empty response body.")
+    except Exception as e:
+        logger.error(f"Database insert error: {str(e)}")
+        raise RuntimeError(f"Database error while saving code review: {str(e)}")
+
+def delete_code_review_entry(user_id: str, entry_id: str) -> bool:
+    """
+    Deletes a specific code review record belonging to the user.
+    """
+    if not supabase_client:
+        raise RuntimeError("Supabase client is not initialized.")
+        
+    try:
+        logger.info(f"Deleting code review log {entry_id} for user: {user_id}")
+        response = supabase_client.table("code_reviews") \
+            .delete() \
+            .eq("id", entry_id) \
+            .eq("user_id", user_id) \
+            .execute()
+            
+        if response.data and len(response.data) > 0:
+            return True
+        return False
+    except Exception as e:
+        logger.error(f"Database delete error: {str(e)}")
+        raise RuntimeError(f"Database error while deleting code review entry: {str(e)}")
