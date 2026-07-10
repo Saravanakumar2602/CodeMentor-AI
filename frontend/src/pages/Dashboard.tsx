@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CodeArea from '../components/CodeArea';
-import api from '../lib/api';
+import { usePlayground } from '../context/PlaygroundContext';
 import { Terminal, Send, AlertTriangle, Sparkles } from 'lucide-react';
 
 const LANGUAGES = [
@@ -17,51 +17,17 @@ const LANGUAGES = [
 ];
 
 const Dashboard: React.FC = () => {
-  const [code, setCode] = useState('');
-  const [language, setLanguage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
-  const [explanation, setExplanation] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // Helper to simulate loading steps for the user
-  const startLoadingSteps = () => {
-    setLoadingStep(1); // Connecting...
-    const timer1 = setTimeout(() => setLoadingStep(2), 1500); // Analyzing...
-    const timer2 = setTimeout(() => setLoadingStep(3), 3200); // Formatting...
-    return [timer1, timer2];
-  };
-
-  const handleExplain = async () => {
-    if (!code.trim()) {
-      setError('Please paste some code first.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setExplanation(null);
-    const timers = startLoadingSteps();
-
-    try {
-      const response = await api.post('/explain', {
-        code_input: code,
-        language: language || undefined,
-      });
-      setExplanation(response.data.ai_response);
-    } catch (err: any) {
-      console.error(err);
-      setError(
-        err.response?.data?.detail || 
-        err.message || 
-        'Could not get explanation. Make sure the backend server is running and configured.'
-      );
-    } finally {
-      timers.forEach(clearTimeout);
-      setLoading(false);
-      setLoadingStep(0);
-    }
-  };
+  const {
+    code,
+    setCode,
+    language,
+    setLanguage,
+    loading,
+    loadingStep,
+    explanation,
+    error,
+    handleExplain,
+  } = usePlayground();
 
   // Helper function to render markdown text in standard JSX
   const renderMarkdown = (text: string) => {

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     
     # AI Configuration (OpenAI-compatible)
-    AI_API_BASE_URL: str = "https://api.openrouter.ai/v1"
+    AI_API_BASE_URL: str = "https://openrouter.ai/api/v1"
     AI_API_KEY: str
     AI_MODEL_NAME: str = "nvidia/nemotron-3-ultra-550b-a55b:free"
     

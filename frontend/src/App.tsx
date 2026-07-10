@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { PlaygroundProvider } from './context/PlaygroundContext';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -11,22 +12,24 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* Public Auth Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+        <PlaygroundProvider>
+          <Routes>
+            {/* Public Auth Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Dashboard/App Routes */}
-          <Route element={<PrivateRoute />}>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/history" element={<HistoryPage />} />
+            {/* Protected Dashboard/App Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/history" element={<HistoryPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Fallback to Dashboard / Home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            {/* Fallback to Dashboard / Home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </PlaygroundProvider>
       </AuthProvider>
     </BrowserRouter>
   );
