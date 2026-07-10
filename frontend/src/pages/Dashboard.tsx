@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CodeArea from '../components/CodeArea';
 import api from '../lib/api';
-import { Terminal, Send, AlertTriangle, Sparkles, ChevronRight } from 'lucide-react';
+import { Terminal, Send, AlertTriangle, Sparkles } from 'lucide-react';
 
 const LANGUAGES = [
   { value: '', label: 'Auto Detect Language' },

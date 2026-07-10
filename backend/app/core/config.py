@@ -9,8 +9,10 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "CodeMentor AI API"
     API_V1_STR: str = "/api"
     
-    # Gemini Configuration
-    GEMINI_API_KEY: str
+    # AI Configuration (OpenAI-compatible)
+    AI_API_BASE_URL: str = "https://api.openrouter.ai/v1"
+    AI_API_KEY: str
+    AI_MODEL_NAME: str = "nvidia/nemotron-3-ultra-550b-a55b:free"
     
     # Supabase Configuration
     SUPABASE_URL: str

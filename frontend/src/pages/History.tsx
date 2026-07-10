@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../lib/api';
-import { History, Calendar, Code, Sparkles, Terminal, BookOpen, ChevronRight, FileText } from 'lucide-react';
+import { History, Calendar, Code, Sparkles, BookOpen, FileText, Trash2 } from 'lucide-react';
 
 interface HistoryItem {
   id: string;
@@ -38,6 +38,26 @@ const HistoryPage: React.FC = () => {
 
     fetchHistory();
   }, []);
+
+  const handleDelete = async (itemId: string) => {
+    if (!window.confirm("Are you sure you want to delete this explanation from your history?")) {
+      return;
+    }
+    try {
+      await api.delete(`/history/${itemId}`);
+      // Remove from list
+      const updatedList = historyList.filter(item => item.id !== itemId);
+      setHistoryList(updatedList);
+      if (updatedList.length > 0) {
+        setSelectedItem(updatedList[0]);
+      } else {
+        setSelectedItem(null);
+      }
+    } catch (err: any) {
+      console.error("Error deleting history item:", err);
+      alert(err.response?.data?.detail || "Failed to delete history item.");
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -232,9 +252,18 @@ const HistoryPage: React.FC = () => {
                     <BookOpen size={16} className="text-indigo-400" />
                     <span className="text-sm font-semibold text-slate-200">Log Details</span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500">
-                    ID: {selectedItem.id.slice(0, 8)}...
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono text-slate-500">
+                      ID: {selectedItem.id.slice(0, 8)}...
+                    </span>
+                    <button
+                      onClick={() => handleDelete(selectedItem.id)}
+                      className="p-1 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 rounded transition-colors"
+                      title="Delete Entry"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Body Content */}

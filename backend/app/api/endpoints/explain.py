@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.models.schemas import CodeExplanationRequest, CodeExplanationResponse
 from app.core.security import get_current_user
-from app.services.gemini import generate_code_explanation
+from app.services.ai import generate_code_explanation
 from app.services.supabase import create_chat_history_entry
 
 logger = logging.getLogger(__name__)
