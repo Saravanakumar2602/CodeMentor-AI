@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import auth, explain, history, review, learning
+from app.api.endpoints import auth, explain, history, review, learning, practice
 
 api_router = APIRouter()
 
@@ -9,3 +9,5 @@ api_router.include_router(explain.router, prefix="/explain", tags=["Code Explana
 api_router.include_router(history.router, prefix="/history", tags=["Chat History"])
 api_router.include_router(review.router, prefix="/review", tags=["Code Review"])
 api_router.include_router(learning.router, prefix="/learning", tags=["Learning Path"])
+api_router.include_router(practice.router, prefix="/practice", tags=["Practice Lab"])
+

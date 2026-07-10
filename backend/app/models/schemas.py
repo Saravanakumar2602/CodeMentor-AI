@@ -107,3 +107,81 @@ class CodeLearningPathResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PracticeGenerationRequest(BaseModel):
+    """
+    Validation schema for generating a personalized practice question.
+    """
+    question_type: str = Field(..., description="Type of question: coding, mcq, output_prediction, find_the_bug, fill_in_the_blank")
+    topic: str = Field(..., description="The programming topic (e.g., Recursion, Arrays, SQL, etc.)")
+    difficulty_level: str = Field(..., description="Beginner, Easy, Medium, Hard, Interview")
+    programming_language: str = Field(..., description="The programming language tag (e.g., python, javascript, sql)")
+    company: Optional[str] = Field(None, description="Optional target company focus (e.g., Google, Amazon)")
+
+
+class PracticeQuestionResponse(BaseModel):
+    """
+    Validation schema for returned practice question records.
+    """
+    id: str = Field(..., description="Unique UUID identification of the question.")
+    user_id: str = Field(..., description="Unique user profile UUID.")
+    question_type: str = Field(..., description="Type of question.")
+    topic: str = Field(..., description="The programming topic.")
+    difficulty_level: str = Field(..., description="The difficulty level.")
+    company: Optional[str] = Field(None, description="Optional target company.")
+    programming_language: str = Field(..., description="The programming language.")
+    title: str = Field(..., description="The generated question title.")
+    description: str = Field(..., description="The description or prompt details.")
+    code_context: Optional[str] = Field(None, description="Snippet code context if applicable.")
+    options: List[str] = Field(default=[], description="List of choices if MCQ.")
+    hints: List[str] = Field(default=[], description="List of hints and solutions.")
+    created_at: datetime = Field(..., description="Timestamp of creation.")
+
+    class Config:
+        from_attributes = True
+
+
+class PracticeSubmissionRequest(BaseModel):
+    """
+    Validation schema for submitting a practice question answer.
+    """
+    question_id: str = Field(..., description="Unique UUID of the question being answered.")
+    user_answer: str = Field(..., description="The user's code, text, or selected option.")
+    hints_used: int = Field(0, description="The number of hints revealed by the user.")
+    practice_time_seconds: int = Field(0, description="Total practice duration in seconds.")
+
+
+class PracticeAttemptResponse(BaseModel):
+    """
+    Validation schema for practice attempts records.
+    """
+    id: str = Field(..., description="Unique UUID identification of the attempt.")
+    user_id: str = Field(..., description="Unique user profile UUID.")
+    question_id: str = Field(..., description="Unique UUID of the question.")
+    user_answer: str = Field(..., description="The user's answer submission.")
+    is_correct: bool = Field(..., description="Boolean indicating if the answer was correct.")
+    hints_used: int = Field(..., description="The number of hints revealed.")
+    evaluation: dict = Field(..., description="The detailed JSON evaluation block from the AI.")
+    created_at: datetime = Field(..., description="Timestamp of submission.")
+
+    class Config:
+        from_attributes = True
+
+
+class PracticeStatisticsResponse(BaseModel):
+    """
+    Validation schema for practice statistics records.
+    """
+    user_id: str = Field(..., description="Unique user profile UUID.")
+    attempts_count: int = Field(..., description="Total count of practice attempts.")
+    correct_attempts_count: int = Field(..., description="Total count of correct attempts.")
+    streak: int = Field(..., description="Current daily active streak count.")
+    last_practice_date: Optional[datetime] = Field(None, description="Timestamp of last active practice.")
+    weak_topics: List[str] = Field(default=[], description="Identified weak topics for practice focus.")
+    practice_time_seconds: int = Field(..., description="Total practice time in seconds.")
+    updated_at: datetime = Field(..., description="Timestamp of last update.")
+
+    class Config:
+        from_attributes = True
+

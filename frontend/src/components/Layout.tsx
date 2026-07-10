@@ -1,11 +1,13 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Terminal, History, LogOut, Code, FileCheck2, Compass } from 'lucide-react';
+import { Terminal, History, LogOut, Code, FileCheck2, Compass, Award } from 'lucide-react';
 
 const Layout: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isPractice = location.pathname === '/practice';
 
   const handleLogout = async () => {
     try {
@@ -73,6 +75,20 @@ const Layout: React.FC = () => {
           >
             <Compass size={20} />
             <span>Learning Path</span>
+          </NavLink>
+
+          <NavLink
+            to="/practice"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                isActive
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/20 border border-indigo-500/20'
+                  : 'text-slate-400 hover:bg-slate-950/40 hover:text-slate-100 border border-transparent'
+              }`
+            }
+          >
+            <Award size={20} />
+            <span>Practice Lab</span>
           </NavLink>
 
           <NavLink
@@ -150,6 +166,15 @@ const Layout: React.FC = () => {
               <Compass size={18} />
             </NavLink>
             <NavLink
+              to="/practice"
+              className={({ isActive }) =>
+                `p-2 rounded-lg transition-colors ${isActive ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-400'}`
+              }
+              title="Practice Lab"
+            >
+              <Award size={18} />
+            </NavLink>
+            <NavLink
               to="/history"
               className={({ isActive }) =>
                 `p-2 rounded-lg transition-colors ${isActive ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-400'}`
@@ -163,9 +188,8 @@ const Layout: React.FC = () => {
           </div>
         </header>
 
-        {/* Page Content Viewport */}
-        <main className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-8">
-          <div className="max-w-5xl mx-auto h-full">
+        <main className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-6">
+          <div className={`${isPractice ? 'w-full px-2' : 'max-w-5xl mx-auto'} h-full`}>
             <Outlet />
           </div>
         </main>

@@ -75,95 +75,129 @@ const HistoryPage: React.FC = () => {
     return firstLine.length > 35 ? firstLine.slice(0, 35) + '...' : firstLine;
   };
 
-  // Helper function to render markdown text in standard JSX (same parser as dashboard)
+  // Helper function to render markdown text in standard JSX with list-grouping logic
   const renderMarkdown = (text: string) => {
     const blocks = text.split(/(```[\s\S]*?```)/g);
     
     return blocks.map((block, idx) => {
+      // Handle code blocks
       if (block.startsWith('```')) {
         const match = block.match(/```(\w*)\n([\s\S]*?)```/);
         const lang = match ? match[1] : '';
         const codeContent = match ? match[2] : block.slice(3, -3);
         
         return (
-          <div key={idx} className="my-4 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-lg">
+          <div key={idx} className="my-4 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-lg select-text">
             <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider">
               <span>{lang || 'code'}</span>
             </div>
-            <pre className="p-4 overflow-x-auto font-mono text-xs text-indigo-300 leading-relaxed">
+            <pre className="p-4 overflow-x-auto font-mono text-xs text-indigo-300 leading-relaxed select-text">
               <code>{codeContent}</code>
             </pre>
           </div>
         );
       }
 
+      // Handle standard text lines by grouping lists and paragraphs
       const lines = block.split('\n');
-      return lines.map((line, lIdx) => {
-        const trimmed = line.trim();
+      const renderedElements: React.ReactNode[] = [];
+      let currentListItems: { key: string, content: string }[] = [];
+      let listType: 'unordered' | 'ordered' | null = null;
 
-        if (trimmed.startsWith('# ')) {
-          return (
-            <h1 key={`${idx}-${lIdx}`} className="text-2xl font-bold text-slate-100 mt-6 mb-3 border-b border-slate-800 pb-2">
-              {trimmed.slice(2)}
-            </h1>
-          );
-        }
-        
-        if (trimmed.startsWith('## ')) {
-          return (
-            <h2 key={`${idx}-${lIdx}`} className="text-xl font-bold text-slate-200 mt-5 mb-2">
-              {trimmed.slice(3)}
-            </h2>
-          );
-        }
-
-        if (trimmed.startsWith('### ')) {
-          return (
-            <h3 key={`${idx}-${lIdx}`} className="text-md font-semibold text-slate-200 mt-4 mb-2">
-              {trimmed.slice(4)}
-            </h3>
-          );
-        }
-
-        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-          return (
-            <ul key={`${idx}-${lIdx}`} className="list-disc pl-5 text-slate-300 space-y-1 my-1 text-sm">
-              <li>{parseInlineFormatting(trimmed.slice(2))}</li>
+      const flushList = (keyPrefix: string) => {
+        if (currentListItems.length === 0) return;
+        if (listType === 'unordered') {
+          renderedElements.push(
+            <ul key={`${keyPrefix}-list`} className="list-disc pl-5 text-slate-300 space-y-2 my-3.5 text-sm leading-relaxed select-text">
+              {currentListItems.map((item, i) => (
+                <li key={`${keyPrefix}-li-${i}`}>{parseInlineFormatting(item.content)}</li>
+              ))}
             </ul>
           );
-        }
-
-        const orderedMatch = trimmed.match(/^(\d+)\.\s(.*)/);
-        if (orderedMatch) {
-          return (
-            <ol key={`${idx}-${lIdx}`} className="list-decimal pl-5 text-slate-300 space-y-1 my-1 text-sm">
-              <li>{parseInlineFormatting(orderedMatch[2])}</li>
+        } else if (listType === 'ordered') {
+          renderedElements.push(
+            <ol key={`${keyPrefix}-list`} className="list-decimal pl-5 text-slate-300 space-y-2 my-3.5 text-sm leading-relaxed select-text">
+              {currentListItems.map((item, i) => (
+                <li key={`${keyPrefix}-li-${i}`}>{parseInlineFormatting(item.content)}</li>
+              ))}
             </ol>
           );
         }
+        currentListItems = [];
+        listType = null;
+      };
 
-        if (trimmed === '') {
-          return <div key={`${idx}-${lIdx}`} className="h-3"></div>;
+      lines.forEach((line, lIdx) => {
+        const trimmed = line.trim();
+        const key = `${idx}-${lIdx}`;
+
+        // Check for headers
+        if (trimmed.startsWith('# ')) {
+          flushList(key);
+          renderedElements.push(
+            <h1 key={key} className="text-2xl font-bold text-slate-100 mt-6 mb-3 border-b border-slate-800 pb-2 select-text">
+              {trimmed.slice(2)}
+            </h1>
+          );
+        } else if (trimmed.startsWith('## ')) {
+          flushList(key);
+          renderedElements.push(
+            <h2 key={key} className="text-lg font-bold text-slate-200 mt-5 mb-2.5 select-text">
+              {trimmed.slice(3)}
+            </h2>
+          );
+        } else if (trimmed.startsWith('### ')) {
+          flushList(key);
+          renderedElements.push(
+            <h3 key={key} className="text-base font-semibold text-slate-200 mt-4 mb-2 select-text">
+              {trimmed.slice(4)}
+            </h3>
+          );
+        } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          if (listType !== 'unordered') {
+            flushList(key);
+            listType = 'unordered';
+          }
+          currentListItems.push({ key, content: trimmed.slice(2) });
+        } else {
+          const orderedMatch = trimmed.match(/^(\d+)\.\s(.*)/);
+          if (orderedMatch) {
+            if (listType !== 'ordered') {
+              flushList(key);
+              listType = 'ordered';
+            }
+            currentListItems.push({ key, content: orderedMatch[2] });
+          } else if (trimmed === '') {
+            flushList(key);
+            renderedElements.push(<div key={key} className="h-2"></div>);
+          } else {
+            flushList(key);
+            renderedElements.push(
+              <p key={key} className="text-slate-300 text-sm leading-relaxed mb-3 select-text">
+                {parseInlineFormatting(line)}
+              </p>
+            );
+          }
         }
-
-        return (
-          <p key={`${idx}-${lIdx}`} className="text-slate-300 text-sm leading-relaxed mb-2">
-            {parseInlineFormatting(line)}
-          </p>
-        );
       });
+
+      // Flush leftover items
+      flushList(`end-${idx}`);
+
+      return renderedElements;
     });
   };
 
+  // Helper function to format bold text and inline code blocks
   const parseInlineFormatting = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index} className="font-semibold text-indigo-300">{part.slice(2, -2)}</strong>;
+        return <strong key={index} className="font-bold text-slate-100">{part.slice(2, -2)}</strong>;
       }
       if (part.startsWith('`') && part.endsWith('`')) {
         return (
-          <code key={index} className="font-mono bg-slate-900/80 text-purple-400 px-1.5 py-0.5 rounded text-xs border border-slate-800">
+          <code key={index} className="font-mono bg-slate-950/80 text-indigo-400 px-1.5 py-0.5 rounded border border-slate-800/80 text-xs">
             {part.slice(1, -1)}
           </code>
         );
