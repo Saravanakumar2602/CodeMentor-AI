@@ -1,6 +1,10 @@
-# CodeMentor AI - Phase 1 MVP
+# CodeMentor AI - Adaptive Developer Practice Platform (V4)
 
-CodeMentor AI is an AI-powered developer tool that explains complex code scripts using Nvidia's Nemotron-3 model and records explanation logs securely via Supabase.
+CodeMentor AI is an AI-powered personal developer companion. It supports four core features:
+1. **Explain Code (V1)**: Pedogogically breaks down complex code snippets using NVIDIA's Nemotron AI model.
+2. **Code Review (V2)**: Generates static code analysis, grading readability, security, complexity, naming patterns, and SOLID compliance.
+3. **Learning Path (V3)**: Constructs personalized knowledge-gap assessments and conceptual learning roadmaps.
+4. **AI Practice Lab (V4)**: Provides a LeetCode-styled interactive split-pane coding workspace. Generates personalized exercises (Coding, MCQs, Output Prediction, Find the Bug, Fill in the Blank) based on past review metrics and learning gaps, complete with a progressive hint system, streak/accuracy statistics tracker, and in-depth performance evaluation drawers.
 
 ---
 
@@ -10,19 +14,22 @@ CodeMentor AI is an AI-powered developer tool that explains complex code scripts
 CodeMentor AI/
 ├── backend/                  # FastAPI Application
 │   ├── app/
-│   │   ├── api/              # API Route Handlers (explain, history, auth)
+│   │   ├── api/              # API Route Handlers (auth, explain, history, review, learning, practice)
 │   │   ├── core/             # Configuration & Auth Security
-│   │   ├── models/           # Pydantic Request/Response validation models
+│   │   ├── models/           # Pydantic validation schemas
 │   │   ├── services/         # Integrations (Nemotron-3 Client & Supabase Python Client)
 │   │   └── main.py           # FastAPI Entrypoint
 │   ├── requirements.txt      # Python libraries
-│   └── schema.sql            # Postgres SQL migration script
-└── frontend/                 # React SPA (Vite + TypeScript)
+│   ├── schema.sql            # Core User & Chat Schema
+│   ├── code_reviews_migration.sql       # Code Review Schema
+│   ├── learning_history_migration.sql   # Learning Path Schema
+│   └── practice_lab_migration.sql       # Practice Lab Schema
+└── frontend/                 # React SPA (Vite + TypeScript + Tailwind CSS 4)
     ├── src/
-    │   ├── components/       # Reusable layout & input fields
-    │   ├── context/          # Authentication state management
+    │   ├── components/       # Reusable layout, navigation, and visual editor widgets
+    │   ├── context/          # Context states (Auth, Playground, Review, Learning, Practice)
     │   ├── lib/              # Axios & Supabase API clients
-    │   ├── pages/            # Login, Signup, Dashboard, History pages
+    │   ├── pages/            # Dashboard views (Login, Signup, CodeReview, LearningPath, Practice)
     │   └── main.tsx          # React application mounting
     └── package.json          # Node libraries
 ```
@@ -32,11 +39,14 @@ CodeMentor AI/
 ## 1. Database and Authentication Setup (Supabase)
 
 1. **Create a Supabase Project**: Go to [Supabase Console](https://supabase.com) and create a new project.
-2. **Execute Database Schema**:
+2. **Execute Database Schemas**:
    * Navigate to the **SQL Editor** tab in your Supabase dashboard.
-   * Click **New Query**.
-   * Copy the SQL script inside [backend/schema.sql](file:///c:/Saravanakumar%20G/Projects/CodeMentor%20AI/backend/schema.sql) and paste it into the query editor.
-   * Click **Run**. This will create the `profiles` table, `chat_history` table, enable Row-Level Security (RLS) policies, and register a Postgres database trigger to automatically map signed-up users to the public `profiles` table.
+   * Click **New Query** and run the query files in sequence:
+     1. [backend/schema.sql](file:///c:/Saravanakumar%2520G/Projects/CodeMentor%2520AI/backend/schema.sql): Sets up auth-profile syncing, base triggers, and chat histories.
+     2. [backend/code_reviews_migration.sql](file:///c:/Saravanakumar%2520G/Projects/CodeMentor%2520AI/backend/code_reviews_migration.sql): Adds the `code_reviews` table.
+     3. [backend/learning_history_migration.sql](file:///c:/Saravanakumar%2520G/Projects/CodeMentor%2520AI/backend/learning_history_migration.sql): Adds the `learning_history` table.
+     4. [backend/practice_lab_migration.sql](file:///c:/Saravanakumar%2520G/Projects/CodeMentor%2520AI/backend/practice_lab_migration.sql): Adds the `practice_questions`, `practice_attempts`, and `practice_statistics` tables.
+   * Make sure RLS policies are enabled and apply successfully for all tables.
 
 ---
 

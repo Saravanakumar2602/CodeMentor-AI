@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# CodeMentor AI - React Client Frontend (V4)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The React client frontend for CodeMentor AI is built using **Vite**, **TypeScript**, and **Tailwind CSS v4.0**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Workspace Structure
 
-## React Compiler
+The frontend code resides in the `src/` directory and is structured as follows:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **`src/components/`**: Core reusable visual elements.
+  - `Layout.tsx`: Full-bleed sidebar dashboard layout with desktop and mobile responsive navigations.
+  - `CodeArea.tsx`: Styled scrollable monospaced view component.
+  - `PrivateRoute.tsx`: Client-side route protection verification wrapper.
+- **`src/context/`**: Global react contexts handling states and asynchronous API operations.
+  - `AuthContext.tsx`: Supabase session, token refresh, login, signup, and signout flows.
+  - `PlaygroundContext.tsx`: Manages code inputs and code explanation requests.
+  - `ReviewContext.tsx`: Code review analysis results and logs state management.
+  - `LearningContext.tsx`: Conceptual path planner context.
+  - `PracticeContext.tsx`: AI Practice Lab timer, unlocked progressive hints, statistics summary, and attempt logs.
+- **`src/lib/`**: Network wrapper connections.
+  - `api.ts`: Central Axios client configured with JWT interceptors.
+  - `supabase.ts`: Supabase browser client wrapper.
+- **`src/pages/`**: Primary page view layouts.
+  - `Login.tsx` / `Signup.tsx`: Authentication screen forms.
+  - `Dashboard.tsx`: Explain Code workspace.
+  - `CodeReview.tsx`: Visual dashboard representing code reviews (scores, logic reviews, refactored blocks, and tips).
+  - `LearningPath.tsx`: Tree-roadmap compiler page showing concepts, roadmaps, recommended steps, resources.
+  - `Practice.tsx`: Split-pane LeetCode styled challenge workspace with independent scrolling, hint managers, text code-editors, and graded result drawers.
+  - `History.tsx`: History audit logs selector.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Local Configuration and Dev Setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- Node.js v18 or higher installed on your local computer.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Setup Instructions
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install npm packages:
+   ```bash
+   npm install
+   ```
+3. Set up environment configuration:
+   - Create a `.env` file in the root of `frontend` (reference `.env.example`):
+     ```env
+     VITE_SUPABASE_URL=https://<your-project-id>.supabase.co
+     VITE_SUPABASE_ANON_KEY=ey...
+     VITE_API_URL=http://localhost:8000/api
+     ```
+4. Start the Vite developer server:
+   ```bash
+   npm run dev
+   ```
+   - The dev build will launch at [http://localhost:5173](http://localhost:5173).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Production Build & Linting
+
+### Compile for Production
+```bash
+npm run build
 ```
+- This compiles TypeScript verification (`tsc -b`) and bundles output files directly into the local `dist/` workspace folder using Rolldown/Vite.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Linting
+```bash
+npm run lint
 ```
+- Runs ESLint validation rules matching typescript-eslint rules configuration.
